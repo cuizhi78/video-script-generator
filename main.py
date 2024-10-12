@@ -21,7 +21,7 @@ with st.sidebar:
     openai_api_key = st.text_input(
         "请输入API密钥：",
         type="password",
-        value="输入API密钥")
+        value="")
     st.markdown("[获取API密钥](#)")
 
 subject = st.text_input("💡 请输入视频主题：")
