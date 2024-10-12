@@ -43,12 +43,3 @@ def generate_script(subject, search_info, video_length, creativity, api_key):
 
     return title, script
 
-# api_key='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'
-#
-# try:
-#     # search_result, title, script = generate_script("sora模型", 1, 0.7)
-#     print(generate_script(
-#     "sora模型",1,0.7,api_key))
-#
-# except Exception as e:
-#     print("发生错误：", e)
