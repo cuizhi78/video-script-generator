@@ -1,5 +1,14 @@
 import streamlit as st
 from utils import generate_script
+import openai
+import requests
+
+st.set_page_config(
+    page_title="视频脚本生成器",
+    page_icon="🎬",
+    layout="centered",
+    initial_sidebar_state="auto",
+)
 
 # 初始化按钮状态
 if 'button_disabled' not in st.session_state:
@@ -47,15 +56,25 @@ if st.session_state.submit:
     else:
         with st.spinner("AI正在生成视频脚本，请稍等..."):
             # 调用您的 generate_script 函数
-            title, script = generate_script(subject, search_info, video_length, creativity, openai_api_key)
-        st.success("视频脚本生成成功")
-        st.subheader("🔥 视频标题：")
-        st.info(title)
-        st.subheader("📝 视频脚本：")
-        st.info(script)
+            try:
+                title, script = generate_script(subject, search_info, video_length, creativity, openai_api_key)
+            except openai.AuthenticationError:
+                st.error("认证错误：请检查您的 OpenAI API 密钥是否正确。")
+            except openai.RateLimitError:
+                st.error("请求太频繁：请稍后再试。")
+            except requests.exceptions.RequestException as e:
+                st.error(f"网络请求错误：{e}")
+            except Exception as e:
+                st.error(f"发生未知错误：{e}")
+            else:
+                st.success("视频脚本生成成功")
+                st.subheader("🔥 视频标题：")
+                st.info(title)
+                st.subheader("📝 视频脚本：")
+                st.info(script)
 
-        with st.expander("🧰 辅助信息："):
-            st.info(search_info)
+                with st.expander("🧰 辅助信息："):
+                    st.info(search_info)
 
     # **提交处理完毕，重置按钮状态和提交状态**
     st.session_state.button_disabled = False
@@ -63,4 +82,3 @@ if st.session_state.submit:
 
 # **渲染按钮**
 st.button("🎮 生成视频脚本", on_click=on_click, disabled=st.session_state.button_disabled)
-
